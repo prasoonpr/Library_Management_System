@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from  'mongoose'
 
 const bookSchema = new mongoose.Schema({
   title: {
@@ -35,6 +35,16 @@ const bookSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+
+  dueDays: {
+    type: Number,
+    required: true,
+  },
+  isArchived: {
+    type : Boolean,
+    default : false
+  }
+
 
 //   coverImage: {
 //     type: String, 
