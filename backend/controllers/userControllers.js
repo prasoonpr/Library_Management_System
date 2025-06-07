@@ -6,15 +6,26 @@ import Borrow from '../models/borrowModel.js';
 
 export const getBooksUser = async (req, res) => {
   try {
+    const userId = req.userId;
+
     const books = await Book.find({ isArchived: false }).sort({ createdAt: -1 });
     if (books.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: ErrorMessages.NO_BOOKS_FOUND,
       })
     }
+    const borrowed = await Borrow.find({ user: userId, returnedAt: null }).select('book')
+
+    const borrowedBookIds = borrowed.map((b) => b.book.toString())
+
+    const booksWithStatus = books.map((book) => ({
+      ...book.toObject(),
+      isBorrowed: borrowedBookIds.includes(book._id.toString()),
+    }))
+
     res.status(StatusCodes.OK).json({
       message: ErrorMessages.BOOKS_FETCHED_SUCCESSFULLY,
-      books,
+      books: booksWithStatus,
     })
 
   } catch (err) {
@@ -154,3 +165,4 @@ export const getUserBorrowHistory = async (req, res) => {
     });
   }
 };
+
