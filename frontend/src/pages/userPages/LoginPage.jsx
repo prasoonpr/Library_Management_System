@@ -16,6 +16,7 @@ const LoginPage = () => {
      const response=await login(form)
     localStorage.setItem('userToken',response.data.accessToken)
     navigate('/');
+    window.location.reload();
     // onLogin(form); // Replace with your login logic or API call
   };
 

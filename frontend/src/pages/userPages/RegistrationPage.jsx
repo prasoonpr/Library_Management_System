@@ -26,6 +26,7 @@ const RegistrationPage = () => {
     const response=await register(form)
     localStorage.setItem('userToken',response.data.accessToken)
     navigate('/');
+    window.location.reload();
     // onRegister(form); // Send to backend with role info
   };
 

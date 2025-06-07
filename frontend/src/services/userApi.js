@@ -37,7 +37,7 @@ export const userApi = createApi({
             method:'POST',
 
         }),
-        invalidatesTags:['getbooks']
+        invalidatesTags:['getbooks','getBorrowedHistory']
     }),
     borrowedHistory:builder.query({
         query:()=>'/user/books/borrow',
@@ -49,7 +49,26 @@ export const userApi = createApi({
             method:'POST',
             
         }),
-        invalidatesTags:['getBorrowedHistory']
+        invalidatesTags:['getBorrowedHistory','getbooks']
+    }),
+    addToWishlist:builder.mutation({
+      query:(id)=>({
+        url:`/user/books/addtowishlist/${id}`,
+        method:"POST",
+
+      }),
+      invalidatesTags:['getbooks','getWishlist']
+    }),
+    removeWishlist:builder.mutation({
+      query:(id)=>({
+        url:`/user/books/removefromwishlist/${id}`,
+        method:'DELETE'
+      }),
+      invalidatesTags:['',]
+    }),
+    getWishlist:builder.query({
+      query:()=>'/user/whishlist',
+      providesTags:['getWishlist']
     })
   }),
 });
@@ -62,6 +81,9 @@ export const {
   useGetBooksQuery,
   useBorrowBookMutation,
   useBorrowedHistoryQuery,
-  useReturnBookMutation
+  useReturnBookMutation,
+  useAddToWishlistMutation,
+  useRemoveWishlistMutation,
+  useGetWishlistQuery
   
 } = userApi;

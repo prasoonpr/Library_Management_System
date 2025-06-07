@@ -1,11 +1,18 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [token,setToken]=useState()
+
+  useEffect(()=>{
+    const userToken=localStorage.getItem('userToken')
+    setToken(userToken)
+  },[token])
 
   const navLinks = [
     { name: "Books", path: "/" },
@@ -14,6 +21,11 @@ const Navbar = () => {
     { name: "Fines", path: "/fines" },
     { name: "Wishlist", path: "/wishlist" },
   ];
+const logOut = async () => {
+  await localStorage.removeItem('userToken');
+  toast.success('Logout successfully');
+  window.location.reload();
+};
 
   return (
     <nav className="bg-white text-black fixed top-0 left-0 w-full z-50 shadow-md">
@@ -41,8 +53,8 @@ const Navbar = () => {
 
         {/* Right: Logout + Hamburger */}
         <div className="flex items-center gap-4">
-          <button className="bg-white text-black px-3 py-1 rounded hover:bg-gray-100 text-sm">
-            Logout
+          <button onClick={logOut} className="bg-white text-black px-3 py-1 rounded hover:bg-gray-100 text-sm">
+            {token!=null?'Logout':'Login'}
           </button>
           <div className="md:hidden">
             <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>

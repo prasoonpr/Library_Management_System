@@ -8,6 +8,7 @@ import WishlistPage from "../pages/userPages/WishlistPage"
 import LoginPage from "../pages/userPages/LoginPage"
 import RegistrationPage from "../pages/userPages/RegistrationPage"
 import Authenticated from "../utils/protectedRoutes/authenticated"
+import UserPrivate from "../utils/protectedRoutes/userPrivate"
 
 const userRoutes=[
     {
@@ -23,23 +24,23 @@ const userRoutes=[
         children:[
             {
                 path:'/',
-                element:<HomePage/>
+                element:<UserPrivate><HomePage/></UserPrivate>
             },
             {
                 path:'/borrowed',
-                element:<BorrowedPage/>
+                element:<UserPrivate><BorrowedPage/></UserPrivate>
             },
             {
                 path:'/history',
-                element:<HistoryPage/>
+                element:<UserPrivate><HistoryPage/></UserPrivate>
             },
             {
                 path:'/fines',
-                element:<FinesPage/>
+                element:<UserPrivate><FinesPage/></UserPrivate>
             },
             {
                 path:'/wishlist',
-                element:<WishlistPage/>
+                element:<UserPrivate><WishlistPage/></UserPrivate>
             },
             {
                 path:'/login',

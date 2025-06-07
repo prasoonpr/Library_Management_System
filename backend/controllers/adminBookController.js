@@ -36,7 +36,6 @@ export const addBook = async (req, res) => {
       description,
       dueDays
     } = req.body
-    console.log(req.body)
 
     const IsExist = await Book.findOne({ title, author })
     if (IsExist) {

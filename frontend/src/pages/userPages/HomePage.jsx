@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import BookCard from "../../components/BookCard";
-import { useBorrowBookMutation, useGetBooksQuery } from "../../services/userApi";
+import { useAddToWishlistMutation, useBorrowBookMutation, useGetBooksQuery, useRemoveWishlistMutation } from "../../services/userApi";
 import { format } from "date-fns"; 
 import { toast } from "sonner";
 
@@ -10,8 +10,9 @@ import { toast } from "sonner";
 const HomePage = () => {
   const { data } = useGetBooksQuery();
   const [borrow]=useBorrowBookMutation()
+  const [addWishlist]=useAddToWishlistMutation()
+  const [removeWishlist]=useRemoveWishlistMutation()
   const books = data?.books || [];
-  const [wishlist, setWishlist] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterAuthor, setFilterAuthor] = useState("");
   const [filterGenre, setFilterGenre] = useState("");
@@ -23,10 +24,23 @@ const onBorrow = (book) => {
   setShowModal(true);
 };
 
-  const toggleWishlist = (id) => {
-    setWishlist((prev) =>
-      prev.includes(id) ? prev.filter((bookId) => bookId !== id) : [...prev, id]
-    );
+  const toggleWishlist = async(id,isWishlisted) => {
+    if(isWishlisted){
+      const response=await removeWishlist(id)
+      if(response.data){
+        toast.success('Book removed from wishlist')
+      }else{
+        toast.error('something went wrong')
+      }
+    }else{
+      console.log(id)
+      const response=await addWishlist(id)
+      if(response.data){
+        toast.success('Book added to wishlist')
+      }else{
+        toast.error('something went wrong')
+      }
+    }
   };
 
   const filteredBooks = books.filter((book) => {
@@ -90,7 +104,6 @@ const onBorrow = (book) => {
               key={book.id + book.isbn}
               book={book}
               onWishlistToggle={toggleWishlist}
-              isWishlisted={wishlist.includes(book.id)}
               onBorrow={onBorrow}
             />
           ))
