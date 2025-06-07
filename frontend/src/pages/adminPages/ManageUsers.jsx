@@ -9,6 +9,7 @@ import {
 
 const ManageUsers = () => {
   const { data, isLoading, refetch } = useGetUsersQuery();
+  console.log(data)
   const users = data?.users || [];
 
   const [blockUser] = useBlockUserMutation();

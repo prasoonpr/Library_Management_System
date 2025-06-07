@@ -1,3 +1,4 @@
+import borrowModel from '../models/borrowModel.js';
 import User from '../models/userModel.js';
 import { ErrorMessages, StatusCodes } from '../utils/constants.js';
 
@@ -13,7 +14,7 @@ export const getUsers = async (req, res) => {
 
     const userList = await Promise.all(
       users.map(async (user) => {
-        const unpaidBorrows = await Borrow.find({
+        const unpaidBorrows = await borrowModel.find({
           user: user._id,
           finePaid: false,
         });
@@ -35,10 +36,11 @@ export const getUsers = async (req, res) => {
     );
 
     res.status(StatusCodes.OK).json({
-      message: ErrorMessages.USERS_FETCHED_SUCCESSFULLY,
+      message: ErrorMessages.USERS_FETCHED,
       users: userList,
     });
   } catch (err) {
+    console.log(err)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: ErrorMessages.FAILED_TO_FETCH_USERS,
       error: err.message,

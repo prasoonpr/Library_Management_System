@@ -39,8 +39,8 @@ const BorrowedPage = () => {
       className="flex flex-col md:flex-row items-start md:items-center justify-between bg-white shadow-md rounded-xl p-4 border border-gray-200"
     >
       <div className="space-y-1">
-        <h2 className="text-lg font-semibold text-gray-800">{borrow.book.title}</h2>
-        <p className="text-sm text-gray-600">Author: {borrow.book.author}</p>
+        <h2 className="text-lg font-semibold text-gray-800">{borrow?.book?.title}</h2>
+        <p className="text-sm text-gray-600">Author: {borrow?.book?.author}</p>
         <p className="text-sm text-gray-600">
           Borrowed On: {format(borrowDate, "dd MMM yyyy")}
         </p>
@@ -50,7 +50,7 @@ const BorrowedPage = () => {
       </div>
 
       <button
-        onClick={() => handleReturn(borrow._id)}
+        onClick={() => handleReturn(borrow?._id)}
         className="mt-4 md:mt-0 px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
       >
         Return Book

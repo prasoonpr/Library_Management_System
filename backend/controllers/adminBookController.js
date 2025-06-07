@@ -16,6 +16,7 @@ export const getBooks = async (req,res)=>{
     })
     
     } catch (err) {
+      console.log(err)
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: ErrorMessages.FAILED_TO_FETCH_BOOKS,
       error: err.message,
@@ -35,6 +36,7 @@ export const addBook = async (req, res) => {
       description,
       dueDays
     } = req.body
+    console.log(req.body)
 
     const IsExist = await Book.findOne({ title, author })
     if (IsExist) {
@@ -70,6 +72,7 @@ export const addBook = async (req, res) => {
       book: safeBook,
     })
   } catch (err) {
+    console.log(err)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: ErrorMessages.FAILED_TO_ADD_BOOK,
       error: err.message,
