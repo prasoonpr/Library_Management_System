@@ -45,10 +45,6 @@ const bookSchema = new mongoose.Schema({
     default : false
   }
 
-
-//   coverImage: {
-//     type: String, 
-//   },
 },
  { timestamps: true });
 

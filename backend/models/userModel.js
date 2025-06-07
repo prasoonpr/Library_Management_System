@@ -32,7 +32,11 @@ const userSchema = new mongoose.Schema({
   isBlocked: {
     type:Boolean,
     default : false
-  }
+  },
+  borrowedBooks: [{
+     type: mongoose.Schema.Types.ObjectId, ref: 'Borrow'
+  }]
+
 });
 
 export default mongoose.model('User', userSchema);

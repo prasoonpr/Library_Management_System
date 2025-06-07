@@ -53,6 +53,11 @@ export const login = async (req, res) => {
         message: ErrorMessages.USER_NOT_FOUND,
       });
     }
+    if(user.isBlocked){
+        return res.status(StatusCodes.FORBIDDEN).json({
+            message:ErrorMessages.USER_BLOCKED,
+        })
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -68,13 +73,13 @@ export const login = async (req, res) => {
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 15 * 60 * 1000, // 15 minutes
+        maxAge: 15 * 60 * 1000, 
         sameSite: 'Strict',
       })
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000, 
         sameSite: 'Strict',
       })
       .status(StatusCodes.OK)
@@ -128,13 +133,13 @@ export const loginAdmin = async (req, res) => {
       .cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 15 * 60 * 1000, // 15 minutes
+        maxAge: 15 * 60 * 1000, 
         sameSite: 'Strict',
       })
       .cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        maxAge: 30 * 24 * 60 * 60 * 1000, 
         sameSite: 'Strict',
       })
       .status(StatusCodes.OK)
@@ -150,6 +155,21 @@ export const loginAdmin = async (req, res) => {
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: messages.LOGIN_FAILED,
+      error: err.message,
+    });
+  }
+};
+
+export const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    res.status(StatusCodes.OK).json({
+      message: ErrorMessages.USER_LOGOUT_SUCCESS,
+    });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: ErrorMessages.USER_LOGOUT_FAIL,
       error: err.message,
     });
   }
