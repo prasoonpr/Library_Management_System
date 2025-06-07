@@ -11,9 +11,32 @@ export const getUsers = async (req, res) => {
       });
     }
 
+    const userList = await Promise.all(
+      users.map(async (user) => {
+        const unpaidBorrows = await Borrow.find({
+          user: user._id,
+          finePaid: false,
+        });
+
+        const totalFine = unpaidBorrows.reduce((sum, record) => {
+          return sum + (record.fine || 0);
+        }, 0)
+
+        return {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          isBlocked: user.isBlocked,
+          createdAt: user.createdAt,
+          totalFine,
+        };
+      })
+    );
+
     res.status(StatusCodes.OK).json({
       message: ErrorMessages.USERS_FETCHED_SUCCESSFULLY,
-      users,
+      users: userList,
     });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -21,7 +44,7 @@ export const getUsers = async (req, res) => {
       error: err.message,
     });
   }
-};
+}
 
 export const blockUser = async (req, res) => {
   try {

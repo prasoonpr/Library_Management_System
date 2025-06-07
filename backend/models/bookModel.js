@@ -17,7 +17,7 @@ const bookSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-
+  
   quantity :{
     type : Number,
     required : true
@@ -43,7 +43,14 @@ const bookSchema = new mongoose.Schema({
   isArchived: {
     type : Boolean,
     default : false
-  }
+  },
+  isbn: {
+  type: String,
+  unique: true,
+  required: true,
+  length: 10,
+},
+
 
 },
  { timestamps: true });

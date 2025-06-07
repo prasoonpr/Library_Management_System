@@ -1,6 +1,6 @@
 import Book from '../models/bookModel.js'
 import { ErrorMessages, StatusCodes } from '../utils/constants.js'
-
+import Borrow from '../models/borrowModel.js';
 
 export const getBooks = async (req,res)=>{
     try {
@@ -42,6 +42,14 @@ export const addBook = async (req, res) => {
         message: ErrorMessages.BOOK_ALREADY_EXISTS,
       })
     }
+    let isbn;
+    let isUnique = false;
+
+    while (!isUnique) {
+      isbn = generateISBN();
+      const exists = await Book.findOne({ isbn });
+      if (!exists) isUnique = true;
+    }
 
     const book = await Book.create({
       title,
@@ -51,7 +59,8 @@ export const addBook = async (req, res) => {
       available,
       publishedDate,
       description,
-      dueDays
+      dueDays,
+      isbn
     })
 
     const { ...safeBook } = book.toObject()
@@ -164,6 +173,92 @@ export const unArchiveBook = async (req, res) => {
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: ErrorMessages.FAILED_TO_UNARCHIVE_BOOK, 
+      error: err.message,
+    });
+  }
+};
+
+
+
+export const getAllBorrowHistory = async (req, res) => {
+  try {
+    const borrowList = await Borrow.find()
+      .populate('user', 'name email')
+      .populate('book', 'title author')
+      .sort({ borrowedAt: -1 });
+
+    if (!borrowList.length) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: ErrorMessages.NO_BORROW_HISTORY,
+      });
+    }
+
+    res.status(StatusCodes.OK).json({
+      message: ErrorMessages.BORROW_HISTORY_FETCHED,
+      history: borrowList,
+    });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: ErrorMessages.FAILED_TO_FETCH_BORROW_HISTORY,
+      error: err.message,
+    });
+  }
+};
+
+export const BorrowHistory = async (req, res) => {
+  try {
+    const borrowList = await Borrow.find({ returnedAt: null }) // 🔍 only currently borrowed
+      .populate('user', 'name email')
+      .populate('book', 'title author')
+      .sort({ borrowedAt: -1 });
+
+    if (!borrowList.length) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: ErrorMessages.NO_BORROW_HISTORY,
+      });
+    }
+
+    res.status(StatusCodes.OK).json({
+      message: ErrorMessages.BORROW_HISTORY_FETCHED,
+      history: borrowList,
+    });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: ErrorMessages.FAILED_TO_FETCH_BORROW_HISTORY,
+      error: err.message,
+    });
+  }
+};
+
+
+
+export const payFineForBorrow = async (req, res) => {
+  try {
+    const { borrowId } = req.params;
+
+    const borrow = await Borrow.findById(borrowId);
+    if (!borrow) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: ErrorMessages.BORROW_NOT_FOUND,
+      });
+    }
+
+    if (borrow.finePaid) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        message: ErrorMessages.FINE_ALREADY_PAID,
+      });
+    }
+
+    borrow.finePaid = true;
+    await borrow.save();
+
+    res.status(StatusCodes.OK).json({
+      message: ErrorMessages.FINE_PAID_SUCCESSFULLY,
+      borrow,
+    });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: ErrorMessages.FAILED_TO_PAY_FINE,
       error: err.message,
     });
   }

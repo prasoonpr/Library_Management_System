@@ -58,7 +58,6 @@ export const ErrorMessages = {
   USER_LOGOUT_FAIL: 'Failed to log out user',
   
   //Borrow
-  // Borrow-related
 BOOK_UNAVAILABLE: 'This book is currently unavailable for borrowing.',
 BOOK_BORROWED_SUCCESS: 'Book borrowed successfully.',
 BOOK_BORROW_FAIL: 'Failed to borrow the book.',
@@ -67,7 +66,24 @@ RETURN_SUCCESS : "Book returned successfully , If there in any unpaid fine pleas
 RETURN_FAIL : "Failed to return book",
 BORROW_NULL : 'Borrow record not found or already returned',
 
-  NO_BORROW_HISTORY: 'No borrow history found.',
-  BORROW_HISTORY_FETCHED: 'Borrow history fetched successfully.',
-  FAILED_TO_FETCH_BORROW_HISTORY: 'Failed to fetch borrow history.',
+NO_BORROW_HISTORY: 'No borrow history found.',
+BORROW_HISTORY_FETCHED: 'Borrow history fetched successfully.',
+FAILED_TO_FETCH_BORROW_HISTORY: 'Failed to fetch borrow history.',
+BORROW_NOT_FOUND: 'Borrow record not found.',
+FINE_PAID_SUCCESSFULLY: 'Fine marked as paid successfully.',
+FAILED_TO_PAY_FINE: 'Failed to mark fine as paid.',
+FINE_ALREADY_PAID: 'Fine has already been paid for this borrow.',
+
+// Wishlist messages
+BOOK_ALREADY_IN_WISHLIST: 'Book is already in your wishlist.',
+BOOK_ADDED_TO_WISHLIST: 'Book added to wishlist.',
+BOOK_NOT_IN_WISHLIST: 'Book not found in your wishlist.',
+BOOK_REMOVED_FROM_WISHLIST: 'Book removed from wishlist.',
+WISHLIST_EMPTY: 'Your wishlist is empty.',
+WISHLIST_FETCH_SUCCESS: 'Wishlist fetched successfully.',
+FAILED_TO_ADD_WISHLIST: 'Failed to add book to wishlist.',
+FAILED_TO_REMOVE_WISHLIST: 'Failed to remove book from wishlist.',
+FAILED_TO_FETCH_WISHLIST: 'Failed to fetch wishlist.',
+
+
 };
