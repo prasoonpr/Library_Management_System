@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
+import { useRegisterMutation } from '../../services/userApi';
+import { useNavigate } from 'react-router-dom';
 
 const RegistrationPage = () => {
+     const navigate=useNavigate()
+    const [register,{error}]=useRegisterMutation()
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -13,12 +17,15 @@ const RegistrationPage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (form.password !== form.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
+    const response=await register(form)
+    localStorage.setItem('userToken',response.data.accessToken)
+    navigate('/');
     // onRegister(form); // Send to backend with role info
   };
 
@@ -28,7 +35,8 @@ const RegistrationPage = () => {
         onSubmit={handleSubmit}
         className="bg-white p-16 rounded-xl shadow-md w-full max-w-md space-y-5"
       >
-        <h2 className="text-2xl font-bold text-center text-blue-700">Register</h2>
+        {error?<h2 className="text-sm font-bold text-center text-red-700 mb-4">{error?.data?.message}</h2>:<h2 className="text-2xl font-bold text-center text-blue-700">Register</h2>}
+        
 
         <input
           type="text"

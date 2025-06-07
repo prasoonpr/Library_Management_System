@@ -4,10 +4,15 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { connectDb } from './config/db.js';
 import authRouter from './routes/authroutes.js';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
+app.use(cors({
+  origin: 'http://localhost:5173', // frontend origin
+  credentials: true               // allow cookies and credentials
+}));
 
 app.use(nocache());
 app.use(express.urlencoded({ extended: true }));
