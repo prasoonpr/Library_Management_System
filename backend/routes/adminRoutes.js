@@ -19,7 +19,7 @@ router.put('/books/edit/:id',editBook)
 router.put('/books/archive/:id',archiveBook)
 router.put('/books/unarchive/:id',unArchiveBook)
 router.get('/books/borrow',getAllBorrowHistory)
-router.get('/books/borrowOnly',BorrowHistory)
+router.get('/books/borrowonly',BorrowHistory)
 router.put('/books/borrow/:bookId',payFineForBorrow)
 
 //user

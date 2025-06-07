@@ -33,7 +33,8 @@ export const ErrorMessages = {
   FAILED_TO_UPDATE_BOOK: 'Failed to update book.',
   BOOK_ADDED_SUCCESSFULLY: 'Book added successfully.',
   BOOK_UPDATED_SUCCESSFULLY: 'Book updated successfully.',
-  
+  NO_BORROW :'You have not borrowed any books currently.',
+
   BOOKS_FETCHED_SUCCESSFULLY: 'Books fetched successfully',
   FAILED_TO_FETCH_BOOKS: 'Failed to fetch books',
   

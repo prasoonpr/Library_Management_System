@@ -144,7 +144,7 @@ export const getUserBorrowHistory = async (req, res) => {
   try {
     const userId = req.userId; 
 
-    const borrowRecords = await Borrow.find({ user: userId })
+    const borrowRecords = await Borrow.find({ user: userId, })
       .populate('book', 'title author genre')
       .sort({ borrowedAt: -1 });
 
@@ -161,6 +161,37 @@ export const getUserBorrowHistory = async (req, res) => {
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: ErrorMessages.FAILED_TO_FETCH_BORROW_HISTORY,
+      error: err.message,
+    });
+  }
+};
+
+
+
+export const getCurrentBorrowedByUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const borrowings = await Borrow.find({
+      user: userId,
+      returnedAt: null,
+    })
+      .populate('book', 'title author genre dueDays')
+      .sort({ borrowedAt: -1 });
+
+    if (borrowings.length==0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: ErrorMessages.NO_BORROW,
+      });
+    }
+
+    res.status(StatusCodes.OK).json({
+      message: ErrorMessages.BORROWED_BOOKS_FETCHED,
+      borrowings,
+    });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: ErrorMessages.FAILED_TO_FETCH_BORROWED_BOOKS,
       error: err.message,
     });
   }
