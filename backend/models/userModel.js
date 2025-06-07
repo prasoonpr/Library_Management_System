@@ -22,13 +22,17 @@ const userSchema = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ['user', 'admin'],
+    enum: ['user','admin'],
     default: 'user',
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  isBlocked: {
+    type:Boolean,
+    default : false
+  }
 });
 
 export default mongoose.model('User', userSchema);

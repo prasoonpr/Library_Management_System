@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { connectDb } from './config/db.js';
 import authRouter from './routes/authroutes.js';
 import cors from 'cors';
+import adminRouter from './routes/adminRoutes.js'
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/auth', authRouter);
+app.use('/admin',adminRouter)
 
 async function server() {
   const DB = process.env.MONGO_URI;
