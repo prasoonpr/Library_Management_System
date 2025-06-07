@@ -9,3 +9,4 @@ return children
 }
 
 export default Authenticated
+

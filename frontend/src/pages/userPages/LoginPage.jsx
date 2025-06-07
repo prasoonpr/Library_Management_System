@@ -1,14 +1,21 @@
 import React, { useState } from 'react'
+import { useLoginMutation } from '../../services/userApi';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+    const navigate=useNavigate()
+    const [login,{error}]=useLoginMutation()
  const [form, setForm] = useState({ email: "", password: "" });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
+     const response=await login(form)
+    localStorage.setItem('userToken',response.data.accessToken)
+    navigate('/');
     // onLogin(form); // Replace with your login logic or API call
   };
 
@@ -18,8 +25,8 @@ const LoginPage = () => {
         onSubmit={handleSubmit}
         className="bg-white p-16 rounded-xl shadow-md w-full max-w-md space-y-5"
       >
-        <h2 className="text-2xl font-bold text-center text-blue-700">Login</h2>
-
+        
+    {error?<h2 className="text-sm font-bold text-center text-red-700 mb-4">{error?.data?.message}</h2>:<h2 className="text-2xl font-bold text-center text-blue-700">Login</h2>}
         <input
           type="email"
           name="email"
