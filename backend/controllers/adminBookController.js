@@ -44,6 +44,9 @@ export const addBook = async (req, res) => {
     }
     let isbn;
     let isUnique = false;
+    const generateISBN = () => {
+    return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+    };
 
     while (!isUnique) {
       isbn = generateISBN();
