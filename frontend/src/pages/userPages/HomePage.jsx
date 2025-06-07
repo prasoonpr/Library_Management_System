@@ -1,52 +1,27 @@
 
 import React, { useState } from "react";
 import BookCard from "../../components/BookCard";
+import { useBorrowBookMutation, useGetBooksQuery } from "../../services/userApi";
+import { format } from "date-fns"; 
+import { toast } from "sonner";
 
-const books = [
-  {
-    id: 1,
-    title: "The Alchemist",
-    author: "Paulo Coelho",
-    category: "Fiction",
-    isbn: "9780062315007",
-    quantity: 10,
-    available: 7,
-  },
-  {
-    id: 2,
-    title: "Rich Dad Poor Dad",
-    author: "Robert Kiyosaki",
-    category: "Finance",
-    isbn: "9781612680194",
-    quantity: 5,
-    available: 1,
-  },
-  {
-    id: 3,
-    title: "Wings of Fire",
-    author: " Abdul Kalam",
-    category: "Autobiography",
-    isbn: "9788173711466",
-    quantity: 6,
-    available: 3,
-  },
-  {
-    id: 4,
-    title: "1984",
-    author: "George Orwell",
-    category: "Fiction",
-    isbn: "9780451524935",
-    quantity: 8,
-    available: 4,
-  },
-  // ...repeat for testing
-];
+
 
 const HomePage = () => {
+  const { data } = useGetBooksQuery();
+  const [borrow]=useBorrowBookMutation()
+  const books = data?.books || [];
   const [wishlist, setWishlist] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterAuthor, setFilterAuthor] = useState("");
-  const [filterCategory, setFilterCategory] = useState("");
+  const [filterGenre, setFilterGenre] = useState("");
+  const [selectedBook, setSelectedBook] = useState(null); // for modal
+const [showModal, setShowModal] = useState(false); 
+
+const onBorrow = (book) => {
+  setSelectedBook(book);
+  setShowModal(true);
+};
 
   const toggleWishlist = (id) => {
     setWishlist((prev) =>
@@ -58,73 +33,118 @@ const HomePage = () => {
     return (
       book.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (filterAuthor ? book.author === filterAuthor : true) &&
-      (filterCategory ? book.category === filterCategory : true)
+      (filterGenre ? book.genre === filterGenre : true)
     );
   });
 
   const uniqueAuthors = [...new Set(books.map((b) => b.author))];
-  const uniqueCategories = [...new Set(books.map((b) => b.category))];
+  const uniqueGenres = [...new Set(books.map((b) => b.genre))];
 
   return (
-  <div className="min-h-screen flex flex-col p-4">
-    {/* Filters */}
-    <div className="flex items-center justify-between gap-4 mb-6">
-      {/* Left: Author Filter */}
-      <select
-        value={filterAuthor}
-        onChange={(e) => setFilterAuthor(e.target.value)}
-        className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-black shadow-sm"
-      >
-        <option value="">All Authors</option>
-        {uniqueAuthors.map((author) => (
-          <option key={author} value={author}>
-            {author}
-          </option>
-        ))}
-      </select>
+    <div className="min-h-screen flex flex-col p-4">
+      {/* Filters */}
+      <div className="flex items-center justify-between gap-4 mb-6">
+        {/* Left: Author Filter */}
+        <select
+          value={filterAuthor}
+          onChange={(e) => setFilterAuthor(e.target.value)}
+          className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-black shadow-sm"
+        >
+          <option value="">All Authors</option>
+          {uniqueAuthors.map((author) => (
+            <option key={author} value={author}>
+              {author}
+            </option>
+          ))}
+        </select>
 
-      {/* Center: Search Bar */}
-      <input
-        type="text"
-        placeholder="Search by title..."
-        className="flex-1 max-w-md px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-black shadow-sm text-center"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+        {/* Center: Search Bar */}
+        <input
+          type="text"
+          placeholder="Search by title..."
+          className="flex-1 max-w-md px-4 py-2 text-sm border border-gray-300 rounded-md bg-white text-black shadow-sm text-center"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
 
-      {/* Right: Category Filter */}
-      <select
-        value={filterCategory}
-        onChange={(e) => setFilterCategory(e.target.value)}
-        className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-black shadow-sm"
-      >
-        <option value="">All Categories</option>
-        {uniqueCategories.map((category) => (
-          <option key={category} value={category}>
-            {category}
-          </option>
-        ))}
-      </select>
-    </div>
+        {/* Right: Genre Filter */}
+        <select
+          value={filterGenre}
+          onChange={(e) => setFilterGenre(e.target.value)}
+          className="px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-white text-black shadow-sm"
+        >
+          <option value="">All Genres</option>
+          {uniqueGenres.map((genre) => (
+            <option key={genre} value={genre}>
+              {genre}
+            </option>
+          ))}
+        </select>
+      </div>
 
-    {/* Book Cards */}
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 flex-grow">
-      {filteredBooks.length > 0 ? (
-        filteredBooks.map((book) => (
-          <BookCard
-            key={book.id + book.isbn}
-            book={book}
-            onWishlistToggle={toggleWishlist}
-            isWishlisted={wishlist.includes(book.id)}
-          />
-        ))
-      ) : (
-        <p className="text-gray-500 col-span-full text-center">No books found.</p>
-      )}
+      {/* Book Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 flex-grow">
+        {filteredBooks.length > 0 ? (
+          filteredBooks.map((book) => (
+            <BookCard
+              key={book.id + book.isbn}
+              book={book}
+              onWishlistToggle={toggleWishlist}
+              isWishlisted={wishlist.includes(book.id)}
+              onBorrow={onBorrow}
+            />
+          ))
+        ) : (
+          <p className="text-gray-500 col-span-full text-center">No books found.</p>
+        )}
+      </div>
+      {showModal && selectedBook && (
+  <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full space-y-4">
+      <h2 className="text-lg font-bold text-blue-700">Confirm Borrow</h2>
+      <p className="text-gray-700">
+        Are you sure you want to borrow <strong>{selectedBook.title}</strong>?
+      </p>
+      <p className="text-gray-700">
+        Please return it by:{" "}
+        <strong className="text-red-600">
+            {format(
+            new Date(Date.now() + selectedBook.dueDays * 24 * 60 * 60 * 1000),
+            "dd MMM yyyy"
+            )}
+        </strong>
+        </p>
+      <p className="text-sm text-gray-600">
+        A fine of ₹50/day will be charged for late returns.
+      </p>
+      <div className="flex justify-end gap-3 pt-4">
+        <button
+          onClick={() => setShowModal(false)}
+          className="px-4 py-1.5 bg-gray-300 text-sm rounded-md"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={async() => {
+            // borrow logic here
+           const response=await borrow(selectedBook._id)
+           if(response.data){
+            toast.success( `${selectedBook.title} borrowed successfully`)
+               console.log("Borrow confirmed for:", selectedBook.title);
+               setShowModal(false);
+           }
+          }}
+          className="px-4 py-1.5 bg-blue-600 text-white text-sm rounded-md"
+        >
+          Confirm
+        </button>
+      </div>
     </div>
   </div>
-);
+)}
 
+    </div>
+  );
 };
 
 export default HomePage;

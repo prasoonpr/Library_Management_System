@@ -36,7 +36,7 @@ const BookCard = ({ book, onWishlistToggle, isWishlisted,onBorrow  }) => {
           <strong>Author:</strong> {book.author}
         </p>
         <p className="text-sm text-gray-700">
-          <strong>Category:</strong> {book.category}
+          <strong>Genre:</strong> {book.genre}
         </p>
         <p className="text-sm text-gray-700">
           <strong>ISBN:</strong> {book.isbn}

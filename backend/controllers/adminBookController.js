@@ -71,8 +71,9 @@ export const addBook = async (req, res) => {
 export const editBook = async (req, res) => {
   try {
     const { id } = req.params
+    console.log(req.body)
     const updateData = req.body
-    let  book =  Book.findById(id)
+    let  book =await  Book.findById(id)
         if(!book) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: ErrorMessages.NO_BOOKS_FOUND,

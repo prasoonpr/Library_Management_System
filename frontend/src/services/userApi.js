@@ -26,6 +26,30 @@ export const userApi = createApi({
             method:"POST",
             body:form
         })
+    }),
+    getBooks:builder.query({
+        query:()=>'/user/books',
+        providesTags:['getbooks']
+    }),
+    borrowBook:builder.mutation({
+        query:(id)=>({
+            url:`/user/books/borrow/${id}`,
+            method:'POST',
+
+        }),
+        invalidatesTags:['getbooks']
+    }),
+    borrowedHistory:builder.query({
+        query:()=>'/user/books/borrow',
+        providesTags:['getBorrowedHistory']
+    }),
+    returnBook:builder.mutation({
+        query:(id)=>({
+            url:`/user/books/return/${id}`,
+            method:'POST',
+            
+        }),
+        invalidatesTags:['getBorrowedHistory']
     })
   }),
 });
@@ -34,6 +58,10 @@ export const {
  
   useLoginMutation,
   useLogOutMutation,
-  useRegisterMutation
+  useRegisterMutation,
+  useGetBooksQuery,
+  useBorrowBookMutation,
+  useBorrowedHistoryQuery,
+  useReturnBookMutation
   
 } = userApi;
