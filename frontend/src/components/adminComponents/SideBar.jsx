@@ -8,7 +8,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     // Clear token or admin data from storage
     localStorage.removeItem("adminToken"); // or your token key
-    navigate("/admin/login");
+    navigate("/admin");
   };
 
   const navItem = (path, label) => (
