@@ -64,11 +64,15 @@ export const userApi = createApi({
         url:`/user/books/removefromwishlist/${id}`,
         method:'DELETE'
       }),
-      invalidatesTags:['',]
+      invalidatesTags:['getWishlist','getbooks']
     }),
     getWishlist:builder.query({
       query:()=>'/user/whishlist',
       providesTags:['getWishlist']
+    }),
+    getFines:builder.query({
+      query:()=>'/user/books/borrow/fines',
+      providesTags:['getFines']
     })
   }),
 });
@@ -84,6 +88,7 @@ export const {
   useReturnBookMutation,
   useAddToWishlistMutation,
   useRemoveWishlistMutation,
-  useGetWishlistQuery
+  useGetWishlistQuery,
+  useGetFinesQuery
   
 } = userApi;

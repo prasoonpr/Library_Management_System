@@ -248,13 +248,13 @@ export const payFineForBorrow = async (req, res) => {
       });
     }
 
-    if (borrow.finePaid) {
+    if (borrow.finePayed) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         message: ErrorMessages.FINE_ALREADY_PAID,
       });
     }
 
-    borrow.finePaid = true;
+    borrow.finePayed = true;
     await borrow.save();
 
     res.status(StatusCodes.OK).json({
@@ -262,6 +262,7 @@ export const payFineForBorrow = async (req, res) => {
       borrow,
     });
   } catch (err) {
+    console.log(err)
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: ErrorMessages.FAILED_TO_PAY_FINE,
       error: err.message,

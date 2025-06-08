@@ -60,6 +60,17 @@ unblockUser: builder.mutation({
   }),
   invalidatesTags: ['getUsers'],
 }),
+getBorrowHistory:builder.query({
+  query:()=>'/admin/books/borrow',
+  providesTags:['getBorrowHistory']
+}),
+finePaid:builder.mutation({
+  query:(id)=>({
+    url:`/admin/books/borrow/${id}`,
+    method:'PUT'
+  }),
+  invalidatesTags:['getBorrowHistory']
+})
 
   }),
 });
@@ -73,6 +84,8 @@ export const {
     useUnArchiveBookMutation,
     useGetUsersQuery,
     useBlockUserMutation,
-    useUnblockUserMutation
+    useUnblockUserMutation,
+    useGetBorrowHistoryQuery,
+    useFinePaidMutation
   
 } = adminApi;

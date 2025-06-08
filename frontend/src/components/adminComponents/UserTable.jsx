@@ -7,7 +7,8 @@ const UserTable = ({ dummyUsers, onBlockToggle }) => (
       <tr className="bg-blue-100 text-left">
         <th className="py-3 pl-14">Name</th>
         <th className="py-3 pl-14">Email</th>
-        <th className="py-3 pl-14">Status</th>
+        <th className="py-3 pl-14">Role</th>
+        <th className="py-3 pl-14">Total Fines</th>
         <th className="py-3 pl-14">Actions</th>
       </tr>
     </thead>
@@ -16,7 +17,9 @@ const UserTable = ({ dummyUsers, onBlockToggle }) => (
         <tr key={user._id} className="border-t">
           <td className=" py-2">{user.name}</td>
           <td className="">{user.email}</td>
-          <td className="">{user.isBlocked ? "Blocked" : "Active"}</td>
+          <td className="">{user.role}</td>
+          <td className="">{user.totalFine}</td>
+
           <td className="">
             <button
               onClick={() => onBlockToggle(user._id, user.isBlocked)}

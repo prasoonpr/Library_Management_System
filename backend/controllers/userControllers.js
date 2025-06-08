@@ -214,8 +214,10 @@ export const getCurrentBorrowedByUser = async (req, res) => {
 
 export const getCurrentFines = async (req, res) => {
   try {
+    
     const userId = req.userId;
     const today = new Date();
+console.log("userId:", userId);
 
     const unpaidBorrows = await Borrow.find({
       user: userId,
@@ -225,6 +227,8 @@ export const getCurrentFines = async (req, res) => {
     })
     .populate('book', 'title author')
     .sort({ dueDate: 1 });
+
+    console.log(unpaidBorrows)
 
     if (unpaidBorrows.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
