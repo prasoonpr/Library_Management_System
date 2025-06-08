@@ -212,21 +212,22 @@ export const getCurrentBorrowedByUser = async (req, res) => {
 
 
 
+
 export const getCurrentFines = async (req, res) => {
   try {
-    
-    const userId = req.userId;
-    const today = new Date();
-console.log("userId:", userId);
+    const userId = req.userId
+    const today = new Date()
 
     const unpaidBorrows = await Borrow.find({
       user: userId,
-      returnedAt: null,
-      dueDate: { $lt: today },
-      finePaid: false,
+      finePayed: false,
+      $or: [
+        { returnedAt: null, dueDate: { $lt: today } },        
+        { returnedAt: { $ne: null }, fine: { $gt: 0 } }, 
+      ],
     })
     .populate('book', 'title author')
-    .sort({ dueDate: 1 });
+    .sort({ dueDate: 1 })
 
     console.log(unpaidBorrows)
 
@@ -234,32 +235,37 @@ console.log("userId:", userId);
       return res.status(StatusCodes.NOT_FOUND).json({
         message: ErrorMessages.NO_UNPAID_CURRENT_FINES,
         code: StatusCodes.NOT_FOUND,
-      });
+      })
     }
 
     const borrowsWithFine = unpaidBorrows.map((borrow) => {
-      const dueDate = new Date(borrow.dueDate);
-      const overdueDays = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));
-      const fineAmount = overdueDays * 50
+      let fine = borrow.fineAmount || 0;
+      let overdueDays = 0;
+
+      if (!borrow.returnedAt) {
+        const dueDate = new Date(borrow.dueDate)
+        overdueDays = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24))
+        fine = overdueDays * 50;
+      }
 
       return {
         ...borrow.toObject(),
         overdueDays,
-        calculatedFine: fineAmount,
-      };
-    });
+        calculatedFine: fine,
+      }
+    })
 
     res.status(StatusCodes.OK).json({
       message: ErrorMessages.UNPAID_CURRENT_FINES_FETCHED,
       code: StatusCodes.OK,
       borrows: borrowsWithFine,
-    });
+    })
 
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: ErrorMessages.FAILED_TO_FETCH_UNPAID_CURRENT_FINES,
       code: StatusCodes.INTERNAL_SERVER_ERROR,
       error: err.message,
-    });
+    })
   }
-};
+}
