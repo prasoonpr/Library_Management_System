@@ -49,7 +49,7 @@ export const userApi = createApi({
             method:'POST',
             
         }),
-        invalidatesTags:['getBorrowedHistory','getbooks']
+        invalidatesTags:['getBorrowedHistory','getbooks','getFines']
     }),
     addToWishlist:builder.mutation({
       query:(id)=>({

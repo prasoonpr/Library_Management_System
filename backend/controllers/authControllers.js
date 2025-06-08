@@ -110,20 +110,20 @@ export const loginAdmin = async (req, res) => {
 
     if (!user) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: messages.USER_NOT_FOUND,
+        message: ErrorMessages.USER_NOT_FOUND,
       });
     }
 
     if (user.role !== 'admin') {
       return res.status(StatusCodes.FORBIDDEN).json({
-        message: messages.ACCESS_DENIED,
+        message: ErrorMessages.ACCESS_DENIED,
       });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: messages.INVALID_CREDENTIALS,
+        message: ErrorMessages.INVALID_CREDENTIALS,
       });
     }
 
@@ -151,11 +151,11 @@ export const loginAdmin = async (req, res) => {
           email: user.email,
           role: user.role,
         },
-        message: messages.LOGIN_SUCCESS,
+        message: ErrorMessages.LOGIN_SUCCESS,
       });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: messages.LOGIN_FAILED,
+      message: ErrorMessages.LOGIN_FAILED,
       error: err.message,
     });
   }

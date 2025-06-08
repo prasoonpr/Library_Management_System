@@ -70,6 +70,13 @@ finePaid:builder.mutation({
     method:'PUT'
   }),
   invalidatesTags:['getBorrowHistory']
+}),
+adminLogin:builder.mutation({
+  query:(form)=>({
+    url:'/auth/adminLogin',
+    method:'POST',
+    body:form
+  })
 })
 
   }),
@@ -86,6 +93,7 @@ export const {
     useBlockUserMutation,
     useUnblockUserMutation,
     useGetBorrowHistoryQuery,
-    useFinePaidMutation
+    useFinePaidMutation,
+    useAdminLoginMutation
   
 } = adminApi;

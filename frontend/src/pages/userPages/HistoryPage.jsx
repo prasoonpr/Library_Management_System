@@ -40,6 +40,14 @@ const HistoryPage = () => {
                   <p className={`text-sm font-semibold ${returnDate ? "text-green-600" : "text-red-500"}`}>
                     Status: {returnDate ? "Returned" : "Not Returned"}
                   </p>
+                  <p className="text-sm text-gray-700">
+                    Fine: ₹{entry.fine || 0}
+                  </p>
+                  {entry.fine > 0 && (
+                    <p className={`text-sm font-semibold ${entry.finePayed ? "text-green-600" : "text-red-600"}`}>
+                      Fine Status: {entry.finePayed ? "Paid" : "Not Paid"}
+                    </p>
+                  )}
                 </div>
               );
             })}

@@ -4,7 +4,8 @@ import { ErrorMessages, StatusCodes } from '../utils/constants.js';
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find().sort({ createdAt: -1 });
+    const users = await User.find({ role: { $ne: "admin" } }).sort({ createdAt: -1 });
+
 
     if (users.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({

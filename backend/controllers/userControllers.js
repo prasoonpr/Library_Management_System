@@ -229,7 +229,6 @@ export const getCurrentFines = async (req, res) => {
     .populate('book', 'title author')
     .sort({ dueDate: 1 })
 
-    console.log(unpaidBorrows)
 
     if (unpaidBorrows.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
@@ -254,7 +253,7 @@ export const getCurrentFines = async (req, res) => {
         calculatedFine: fine,
       }
     })
-
+console.log(borrowsWithFine)
     res.status(StatusCodes.OK).json({
       message: ErrorMessages.UNPAID_CURRENT_FINES_FETCHED,
       code: StatusCodes.OK,
