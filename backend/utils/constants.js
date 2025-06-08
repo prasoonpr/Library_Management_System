@@ -86,5 +86,8 @@ FAILED_TO_ADD_WISHLIST: 'Failed to add book to wishlist.',
 FAILED_TO_REMOVE_WISHLIST: 'Failed to remove book from wishlist.',
 FAILED_TO_FETCH_WISHLIST: 'Failed to fetch wishlist.',
 
+NO_UNPAID_CURRENT_FINES: 'You have no unpaid current fines.',
+UNPAID_CURRENT_FINES_FETCHED: 'Unpaid current fines fetched successfully.',
+FAILED_TO_FETCH_UNPAID_CURRENT_FINES: 'Failed to fetch unpaid current fines.',
 
 };

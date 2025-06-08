@@ -2,6 +2,8 @@ import User from '../models/userModel.js';
 import { ErrorMessages, StatusCodes } from '../utils/constants.js';
 import Book from '../models/bookModel.js'
 import Borrow from '../models/borrowModel.js';
+import Wishlist from '../models/wishListModel.js';
+
 
 
 export const getBooksUser = async (req, res) => {
@@ -12,29 +14,40 @@ export const getBooksUser = async (req, res) => {
     if (books.length === 0) {
       return res.status(StatusCodes.NOT_FOUND).json({
         message: ErrorMessages.NO_BOOKS_FOUND,
-      })
+        code: StatusCodes.NOT_FOUND,
+      });
     }
-    const borrowed = await Borrow.find({ user: userId, returnedAt: null }).select('book')
 
-    const borrowedBookIds = borrowed.map((b) => b.book.toString())
+    const borrowed = await Borrow.find({ user: userId, returnedAt: null }).select('book');
+    const borrowedBookIds = borrowed.map(b => b.book.toString());
 
-    const booksWithStatus = books.map((book) => ({
-      ...book.toObject(),
-      isBorrowed: borrowedBookIds.includes(book._id.toString()),
-    }))
+    const wishlist = await Wishlist.find({ user: userId }).select('book');
+    const wishlistedBookIds = wishlist.map(w => w.book.toString());
+
+    const booksWithStatus = books.map(book => {
+      const bookIdStr = book._id.toString();
+      return {
+        ...book.toObject(),
+        isBorrowed: borrowedBookIds.includes(bookIdStr),
+        isWishlisted: wishlistedBookIds.includes(bookIdStr),
+      };
+    });
 
     res.status(StatusCodes.OK).json({
       message: ErrorMessages.BOOKS_FETCHED_SUCCESSFULLY,
+      code: StatusCodes.OK,
       books: booksWithStatus,
-    })
+    });
 
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: ErrorMessages.FAILED_TO_FETCH_BOOKS,
+      code: StatusCodes.INTERNAL_SERVER_ERROR,
       error: err.message,
-    })
+    });
   }
-}
+};
+
 
 export const borrowBook = async (req, res) => {
   try {
@@ -197,3 +210,52 @@ export const getCurrentBorrowedByUser = async (req, res) => {
   }
 };
 
+
+
+export const getCurrentFines = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const today = new Date();
+
+    const unpaidBorrows = await Borrow.find({
+      user: userId,
+      returnedAt: null,
+      dueDate: { $lt: today },
+      finePaid: false,
+    })
+    .populate('book', 'title author')
+    .sort({ dueDate: 1 });
+
+    if (unpaidBorrows.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: ErrorMessages.NO_UNPAID_CURRENT_FINES,
+        code: StatusCodes.NOT_FOUND,
+      });
+    }
+
+    const borrowsWithFine = unpaidBorrows.map((borrow) => {
+      const dueDate = new Date(borrow.dueDate);
+      const overdueDays = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));
+      const fineAmount = overdueDays * 50
+
+      return {
+        ...borrow.toObject(),
+        overdueDays,
+        calculatedFine: fineAmount,
+      };
+    });
+
+    res.status(StatusCodes.OK).json({
+      message: ErrorMessages.UNPAID_CURRENT_FINES_FETCHED,
+      code: StatusCodes.OK,
+      borrows: borrowsWithFine,
+    });
+
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: ErrorMessages.FAILED_TO_FETCH_UNPAID_CURRENT_FINES,
+      code: StatusCodes.INTERNAL_SERVER_ERROR,
+      error: err.message,
+    });
+  }
+};
