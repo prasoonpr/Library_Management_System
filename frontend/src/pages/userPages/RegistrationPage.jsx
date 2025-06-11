@@ -31,10 +31,8 @@ const RegistrationPage = () => {
     }else{
       toast.error('Something went wrong')
     }
-    // localStorage.setItem('userToken',response.data.accessToken)
     navigate('/login');
-    // window.location.reload();
-    // onRegister(form); // Send to backend with role info
+
   };
 
   return (
