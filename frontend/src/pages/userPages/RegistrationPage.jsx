@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useRegisterMutation } from '../../services/userApi';
 import { useNavigate } from 'react-router-dom';
+import { toast } from "sonner";
+
 
 const RegistrationPage = () => {
      const navigate=useNavigate()
@@ -24,9 +26,14 @@ const RegistrationPage = () => {
       return;
     }
     const response=await register(form)
-    localStorage.setItem('userToken',response.data.accessToken)
-    navigate('/');
-    window.location.reload();
+    if(response.data){
+      toast.success('Registration successfully completed')
+    }else{
+      toast.error('Something went wrong')
+    }
+    // localStorage.setItem('userToken',response.data.accessToken)
+    navigate('/login');
+    // window.location.reload();
     // onRegister(form); // Send to backend with role info
   };
 
